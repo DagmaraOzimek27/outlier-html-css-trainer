@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Outlier.ai HTML & CSS Assessment Simulator (150 Fajerek)</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- TOP PROCTORING & STATUS BAR -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-badge">OUTLIER.AI SIM</span>
+      <h1>HTML &amp; CSS Skill Screening Trainer</h1>
+    </div>
+    <div class="proctor-status">
+      <button type="button" class="btn btn-secondary" style="padding: 5px 12px; font-size: 0.82rem;" onclick="document.getElementById('qr-modal').style.display='flex'">📱 Kod QR na telefon</button>
+      <span id="proctor-cam-pill" class="status-pill">📷 Kamera: Wyłączona</span>
+      <span id="proctor-tab-pill" class="status-pill active">Przełączenia kart: 0 | Schowek: 0</span>
+    </div>
+  </header>
+
+  <!-- QR CODE MODAL -->
+  <div id="qr-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:999; align-items:center; justify-content:center; padding:20px;" onclick="if(event.target===this)this.style.display='none'">
+    <div style="background:var(--bg-panel); border:1px solid var(--border-color); border-radius:16px; padding:24px; max-width:440px; width:100%; text-align:center; display:flex; flex-direction:column; gap:14px;">
+      <h2 style="font-size:1.15rem;">📱 Zeskanuj telefonem (LTE / Wi-Fi)</h2>
+      <p style="font-size:0.85rem; color:var(--text-muted);">Otwórz symulator na telefonie lub tablecie (świetne do powtórki lub podglądu na drugim ekranie!):</p>
+      <img src="qr_public.png" alt="Kod QR do symulatora" style="width:260px; height:260px; margin:0 auto; border-radius:12px; background:white; padding:8px;">
+      <a href="https://dagmaraozimek27.github.io/outlier-html-css-trainer/" target="_blank" style="color:#a5b4fc; font-size:0.88rem; word-break:break-all;">https://dagmaraozimek27.github.io/outlier-html-css-trainer/</a>
+      <button type="button" class="btn btn-primary" style="justify-content:center;" onclick="document.getElementById('qr-modal').style.display='none'">Zamknij</button>
+    </div>
+  </div>
+
+  <main class="app-container">
+    <!-- SIDEBAR: 5 PHASES + ADAPTIVE RETAKE + WEBCAM PROCTOR -->
+    <aside class="sidebar">
+      <nav class="phase-nav" aria-label="Etapy treningu">
+        <div class="phase-nav-title">Ścieżka Treningowa</div>
+
+        <button class="phase-btn active" data-phase="phase1" type="button">
+          <div class="p-header">
+            <span>1. Przepisuj (Memory)</span>
+            <span>✍️ EN</span>
+          </div>
+          <span class="p-desc">Pytanie + gotowa odpowiedź po angielsku do przepisania</span>
+        </button>
+
+        <button class="phase-btn" data-phase="phase2" type="button">
+          <div class="p-header">
+            <span>2. Test ABCD (Spokojny)</span>
+            <span>🟢 Bez czasu</span>
+          </div>
+          <span class="p-desc">Klasyczne pytania wielokrotnego wyboru z wyjaśnieniem</span>
+        </button>
+
+        <button class="phase-btn" data-phase="phase3" type="button">
+          <div class="p-header">
+            <span>3. Trudne + Licznik</span>
+            <span>⏱️ 45–60s</span>
+          </div>
+          <span class="p-desc">Kaskada, Box Model, pułapki i ocena kodu AI (RLHF)</span>
+        </button>
+
+        <button class="phase-btn" data-phase="phase4" type="button">
+          <div class="p-header">
+            <span>4. Wypowiedzi &amp; Video</span>
+            <span>🎙️ a11y/Teoria</span>
+          </div>
+          <span class="p-desc">Własne wypowiedzi (głosowo lub tekstowo) z oceną klucza</span>
+        </button>
+
+        <button class="phase-btn" data-phase="phase5" type="button">
+          <div class="p-header">
+            <span>5. Egzamin Outlier.ai</span>
+            <span>🚨 Symulacja</span>
+          </div>
+          <span class="p-desc">Pełny test: licznik, kamera, blokada kart + raport</span>
+        </button>
+
+        <button class="phase-btn retake-special" data-phase="retake" type="button">
+          <div class="p-header">
+            <span>🔥 Drugi Trening (Adv)</span>
+            <span id="missed-count-badge">0 błędów</span>
+          </div>
+          <span class="p-desc">Nie zaczynamy od zera! Tylko zaawansowane + Twoje błędy</span>
+        </button>
+      </nav>
+
+      <!-- WEBCAM WIDGET FOR VIDEO QUESTIONS & PROCTORING -->
+      <section class="webcam-box" aria-label="Podgląd kamery">
+        <div style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted);">
+           Podgląd Kamery (Pytania Video / Proctor)
+        </div>
+        <div class="webcam-video-wrap">
+          <span id="webcam-rec-badge" class="webcam-overlay-badge">● REC PROCTOR</span>
+          <video id="proctor-video" autoplay muted playsinline></video>
+          <div id="webcam-placeholder" style="font-size: 0.8rem; color: var(--text-muted); text-align: center; padding: 12px;">
+            Kamera wyłączona.<br>Włącz na czas Fazy 4 (Video) i Fazy 5 (Egzamin).
+          </div>
+        </div>
+        <button id="toggle-cam-btn" class="btn btn-secondary" type="button" style="width: 100%; justify-content: center; font-size: 0.82rem;">
+          🎥 Włącz Kamerę (Symulacja Proctoringu)
+        </button>
+      </section>
+    </aside>
+
+    <!-- MAIN WORKSPACE -->
+    <section class="workspace">
+      <!-- ANTI-CHEAT WARNING BANNER -->
+      <div id="cheat-warning-banner" class="cheat-modal-banner"></div>
+
+      <!-- COUNTDOWN TIMER -->
+      <div id="timer-container" class="timer-container">
+        <div class="timer-header">
+          <span>⏱️ Limit czasu na odpowiedź (Standard Outlier.ai)</span>
+          <span id="timer-seconds">60s</span>
+        </div>
+        <div class="timer-bar-bg">
+          <div id="timer-bar-fill" class="timer-bar-fill"></div>
+        </div>
+      </div>
+
+      <!-- DYNAMIC QUESTION STAGE -->
+      <div id="question-stage" style="display: flex; flex-direction: column; gap: 18px;">
+        <!-- Rendered by app.js -->
+      </div>
+    </section>
+  </main>
+
+  <script src="questions.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
